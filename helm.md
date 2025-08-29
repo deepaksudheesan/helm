@@ -61,3 +61,28 @@ bitnami/nginx-intel                             2.1.15          0.4.9           
  Deepak S   deepaks    
 
 ```
+We can also create repository and keep our chart for our microservices (E commerce - payment,shipments etc..)
+
+```
+ Deepak S   deepaks     helm install nginxv1 bitnami/nginx                                                            in pwsh at 18:20:14
+NAME: nginxv1
+LAST DEPLOYED: Fri Aug 29 18:35:04 2025
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+CHART NAME: nginx
+CHART VERSION: 21.1.23
+APP VERSION: 1.29.1
+
+ Deepak S   deepaks    kubectl get pods                                                                               in pwsh at 18:36:18
+NAME                      READY   STATUS    RESTARTS   AGE
+nginxv1-88b888469-8czsr   1/1     Running   0          83s
+ Deepak S   deepaks      
+
+```
+
+What is release ?
+Release is the deployed instance of the chart
+Name of the release Eg: nginxv1  
