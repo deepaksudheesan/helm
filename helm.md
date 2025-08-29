@@ -88,3 +88,56 @@ nginxv1-88b888469-8czsr   1/1     Running   0          83s
 What is release ?
 Release is the deployed instance of the chart
 Name of the release Eg: nginxv1  
+
+how to install other helm charts which are not part of bitnami ?
+Check official documentation, for example for AWS ingress loadbalancer
+
+```
+ Deepak S   deepaks    helm repo add eks https://aws.github.io/eks-charts                                             in pwsh at 20:27:01
+"eks" has been added to your repositories
+ Deepak S   deepaks    helm repo update eks                                                                           in pwsh at 20:29:15
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "eks" chart repository
+Update Complete. ⎈Happy Helming!⎈
+ Deepak S   deepaks      
+
+ Deepak S   deepaks     helm search repo eks | grep load                                                              in pwsh at 20:38:51
+eks/aws-load-balancer-controller                1.13.4          v2.13.4                                 AWS Load Balancer Controller Helm chart for Kub...
+ Deepak S   deepaks       
+Error: INSTALLATION FAILED: execution error at (aws-load-balancer-controller/templates/deployment.yaml:67:28): Chart cannot be installed without a valid clusterName!
+ Deepak S   deepaks   
+```
+We are not passing arguements hence aws alb is not installing with helm
+
+How to uninstall helm chart
+
+```
+ Deepak S   deepaks    helm list                                                                                      in pwsh at 20:40:06
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+nginxv1         default         1               2025-08-29 18:35:04.5396634 +0530 IST   deployed        nginx-21.1.23           1.29.1
+prometheus      default         1               2025-08-29 18:41:58.2482426 +0530 IST   deployed        prometheus-2.1.23       3.5.0
+ Deepak S   deepaks             
+
+
+ Deepak S   deepaks    helm uninstall nginxv1                                                                         in pwsh at 20:44:08
+release "nginxv1" uninstalled
+ Deepak S   deepaks      
+
+
+ Deepak S   deepaks    kubectl get pods                                                                               in pwsh at 20:44:59
+NAME                               READY   STATUS    RESTARTS   AGE
+prometheus-alertmanager-0          1/1     Running   0          123m
+prometheus-server-9965bf77-kvv2p   1/1     Running   0          123m
+ Deepak S   deepaks       
+ Deepak S   deepaks    helm uninstall prometheus                                                                      in pwsh at 20:46:25
+release "prometheus" uninstalled
+ Deepak S   deepaks                                                                                                   in pwsh at 20:46:32
+
+ Deepak S   deepaks    helm list                                                                                      in pwsh at 20:46:32
+NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+ Deepak S   deepaks    kubectl get pods                                                                               in pwsh at 20:46:59
+No resources found in default namespace.
+ Deepak S   deepaks         
+```
+During the uninstallation we need to use name of the release
+
