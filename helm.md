@@ -24,4 +24,42 @@ Why Helm is needed ?
 
 Kuberenetes is a complex systemt with many moving parts (pods,deplployments,services etc ..).Helm simplifies the process by pacakaging everything into resusable charts. It's like having a one-click install for your entire application stack instad instead of manually cerating each component
 
+How to install helm ?
 
+https://helm.sh/docs/intro/install/
+
+Note:- From version 3 no need to install anything on kubernetes cluster
+
+
+Just like kubectl looks for current context of kubectl file and connect to respective kubernetes cluster Helm also uses context
+
+```
+ Deepak S   deepaks    kind get clusters                                                                              in pwsh at 18:00:46
+learn-helm
+ Deepak S   deepaks    helm version                                                                                   in pwsh at 18:00:49
+version.BuildInfo{Version:"v3.18.6", GitCommit:"b76a950f6835474e0906b96c9ec68a2eff3a6430", GitTreeState:"clean", GoVersion:"go1.24.6"}
+ Deepak S   deepaks    kubectl config current-context   
+kind-learn-helm
+```
+
+Install Nginx in default namespace
+1. Add the repository
+2. Install nginx from the repsository
+
+A helm repositoy consists of all the charts (Chart is a bundle package of the application Eg: grafana chart)
+
+Common repositoy bitnami popular chart
+
+```
+ Deepak S   deepaks    helm repo add bitnami https://charts.bitnami.com/bitnami                                       in pwsh at 18:04:21
+"bitnami" has been added to your repositories
+ Deepak S   deepaks     
+
+
+ Deepak S   deepaks     helm search repo bitnami | grep nginx                                                         in pwsh at 18:20:09
+bitnami/nginx                                   21.1.23         1.29.1          NGINX Open Source is a web server that can be a...
+bitnami/nginx-ingress-controller                12.0.7          1.13.1          NGINX Ingress Controller is an Ingress controll...
+bitnami/nginx-intel                             2.1.15          0.4.9           DEPRECATED NGINX Open Source for Intel is a lig...
+ Deepak S   deepaks    
+
+```
