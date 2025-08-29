@@ -6,8 +6,6 @@ In Kuberentes we can install applications like nginx by running
 
 ```helm install my-nginx bitnami/nginx```
 
-<<<<<<< HEAD
-
 Helm charts are packages containing all the necessary resources and configurations to deploy an application or service on a Kubernetes cluster
 
 Why should we use helm ?
