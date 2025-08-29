@@ -41,8 +41,10 @@ kind-learn-helm
 ```
 
 Install Nginx in default namespace
+
 1. Add the repository
-2. Install nginx from the repsository
+
+3. Install nginx from the repsository
 
 A helm repositoy consists of all the charts (Chart is a bundle package of the application Eg: grafana chart)
 
