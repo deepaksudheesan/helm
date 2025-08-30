@@ -141,3 +141,209 @@ No resources found in default namespace.
 ```
 During the uninstallation we need to use name of the release
 
+
+
+How can we bundle application as helm charts and how to deploy it as helm charts in application or share with others and they can deploy as helm chart in cluster.
+
+Ecommerce application - payment,shipment microserices
+
+create helmchart for payment
+create helmchart for shipment
+add both chart to repository
+others can also can use the chart from repo
+repository --> bestcommerce
+payment --> chart
+shipment --> chart
+
+```
+ Deepak S   best-commerce    pwd                                                                                      in pwsh at 15:43:10
+
+Path
+----
+Microsoft.PowerShell.Core\FileSystem::\\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce
+
+ Deepak S   best-commerce    ls                                                                                       in pwsh at 15:43:23
+
+        Directory: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        30-08-2025  03:43 PM                  payments
+d----        30-08-2025  03:32 PM                  shipping
+
+ Deepak S   best-commerce        
+```
+
+helm create will create complete folder structre for us
+
+
+```
+
+ Deepak S   best-commerce    helm create payments                                                                     in pwsh at 15:43:25
+Creating payments
+ Deepak S   best-commerce    helm create shipping                                                                     in pwsh at 15:44:53
+Creating shipping
+ Deepak S   best-commerce    cd .\payments\                                                                           in pwsh at 15:45:00
+ Deepak S   payments    ls                                                                                            in pwsh at 15:45:04
+
+        Directory: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce\payments
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        30-08-2025  03:44 PM                  charts
+d----        30-08-2025  03:44 PM                  templates
+-----        30-08-2025  03:44 PM            349   .helmignore
+-----        30-08-2025  03:44 PM           1144 󰉢  Chart.yaml
+-----        30-08-2025  03:44 PM           4294 󰉢  values.yaml
+
+ Deepak S   payments    cd ..\shipping\                                                                               in pwsh at 15:45:06
+ Deepak S   shipping    ls                                                                                            in pwsh at 15:45:14
+
+        Directory: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce\shipping
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        30-08-2025  03:45 PM                  charts
+d----        30-08-2025  03:45 PM                  templates
+-----        30-08-2025  03:45 PM            349   .helmignore
+-----        30-08-2025  03:44 PM           1144 󰉢  Chart.yaml
+-----        30-08-2025  03:44 PM           4294 󰉢  values.yaml
+
+ Deepak S   shipping         
+
+```
+
+charts folder for dependencies what we want we to install along with application
+
+chart.yaml --> metadata information for chart owner,version, version of application deployed on chart
+values.yaml -->  any customisation to the template UAT 2 replica
+Prodcution 3 customise whatever files added on template
+templates --> prvoide deployment yaml file or stateful set or daemonset file service account file configmao file , all the yaml file resoucres , bundle of resources
+
+```
+
+ Deepak S   payments    cd .\templates\                                                                               in pwsh at 15:54:35
+ >  ls
+
+        Directory: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce\payments\templates
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        30-08-2025  03:44 PM                󰙨  tests
+-----        30-08-2025  03:44 PM           1792   _helpers.tpl
+-----        30-08-2025  03:44 PM           2385 󰉢  deployment.yaml
+-----        30-08-2025  03:44 PM            994 󰉢  hpa.yaml
+-----        30-08-2025  03:44 PM           1091 󰉢  ingress.yaml
+-----        30-08-2025  03:44 PM           1748 󰈙  NOTES.txt
+-----        30-08-2025  03:44 PM            364 󰉢  service.yaml
+-----        30-08-2025  03:44 PM            391 󰉢  serviceaccount.yaml
+
+ Deepak S   templates    pwd                                                                                          in pwsh at 15:54:49
+
+Path
+----
+Microsoft.PowerShell.Core\FileSystem::\\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce\payments\templates
+
+```
+
+deployment file with variables so that we can customise with values yaml 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: ['sh', '-c', 'echo {{ .Values.appMessage }}; sleep 3600']
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+```
+values.yaml
+```
+image:
+  repository: busybox
+  tag: latest
+  pullPolicy: IfNotPresent
+appMessage: "Payments Service"
+```
+chart.yaml only update version since all other metadata information is correct 
+
+Create chart from above files
+helm package shipping
+helm pacakage payment
+
+```
+ Deepak S   best-commerce    helm package shipping                                                                    in pwsh at 16:40:23
+Successfully packaged chart and saved it to: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce\shipping-0.1.0.tgz
+ Deepak S   best-commerce    helm package payments                                                                    in pwsh at 16:40:33
+Successfully packaged chart and saved it to: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce\payments-0.1.0.tgz
+ Deepak S   best-commerce       
+
+```
+
+
+```
+ Deepak S   best-commerce    helm repo index .                                                                        in pwsh at 16:41:30
+ Deepak S   best-commerce    ls                                                                                       in pwsh at 16:41:47
+
+        Directory: \\wsl.localhost\Ubuntu-18.04\home\deepaks\best-commerce
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        30-08-2025  03:44 PM                  payments
+d----        30-08-2025  03:45 PM                  shipping
+-----        30-08-2025  04:41 PM            709 󰉢  index.yaml
+-----        30-08-2025  04:40 PM           2744   payments-0.1.0.tgz
+-----        30-08-2025  04:40 PM           2740   shipping-0.1.0.tgz
+
+ Deepak S   best-commerce              
+```
+
+```
+apiVersion: v1
+entries:
+  payments:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-08-30T16:41:47.1549735+05:30"
+    description: A Helm chart for Kubernetes
+    digest: dcf6bb0e731d343e7a0141ccf02922867e8336f5299af0e29e1d4068cc4a559c
+    name: payments
+    type: application
+    urls:
+    - payments-0.1.0.tgz
+    version: 0.1.0
+  shipping:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-08-30T16:41:47.1630053+05:30"
+    description: A Helm chart for Kubernetes
+    digest: 6dc7410681c3a0afdb81f6e7d39b05670546855752117f0c1fc2a64da0e3c7c4
+    name: shipping
+    type: application
+    urls:
+    - shipping-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-08-30T16:41:47.1503257+05:30"
+
+```
+
+index.yaml fileThis file serves as a catalog of all the charts within the repository, providing metadata about each chart, including its name, version, and location.
+
