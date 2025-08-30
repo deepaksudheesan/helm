@@ -347,3 +347,37 @@ generated: "2025-08-30T16:41:47.1503257+05:30"
 
 index.yaml fileThis file serves as a catalog of all the charts within the repository, providing metadata about each chart, including its name, version, and location.
 
+
+To create repo we ca use helm repo add command
+artifactory or nexus or github pages
+
+These are values.yaml variables, not using  hard coded values we are updating values
+
+```
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=my-cluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --version 1.13.0
+```
+how to check how values can be set using chart name
+
+```
+ Deepak S   best-commerce    helm show values eks/aws-load-balancer-controller | grep cluster                         in pwsh at 17:28:20
+# Please keep in mind that the controller pods have `priorityClassName: system-cluster-critical`, enabling HPA may lead to the eviction of other low-priority pods in the node
+priorityClassName: system-cluster-critical
+# control how Pods are spread across your cluster among failure-domains such as regions, zones,
+# The name of the Kubernetes cluster. A non-empty value is required
+clusterName:
+# cluster contains configurations specific to the kubernetes cluster
+cluster:
+  dnsDomain: cluster.local
+# The AWS region for the kubernetes cluster. Set to use KIAM or kube2iam for example.
+# The VPC ID for the Kubernetes cluster. Set this manually when your pods are unable to use the metadata service to determine this automatically
+# extraVolumeMounts are the additional volume mounts. This enables setting up IRSA on non-EKS Kubernetes cluster
+# clusterSecretsPermissions lets you configure RBAC permissions for secret resources
+clusterSecretsPermissions:
+  # allowAllSecrets allows the controller to access all secrets in the cluster.
+# serviceTargetENISGTags specifies AWS tags, in addition to the cluster tags, for finding the target ENI SG to which to add inbound rules from NLBs.
+ Deepak S   best-commerce                         
